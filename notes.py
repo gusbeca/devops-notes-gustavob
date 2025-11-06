@@ -1,20 +1,26 @@
+import os
+
 class NotesRepository:
-  def __init__(self):
-      # Esta lista guardará las notas
-      self._notes = []
+    def __init__(self, filename="notas.txt"):
+        self.filename = filename
+        # Crea el archivo si no existe
+        if not os.path.exists(self.filename):
+            open(self.filename, "w").close()
 
-  def create(self, note):
-      # Agrega una nota nueva
-      self._notes.append(note)
+    def create(self, note):
+        with open(self.filename, "a") as f:
+            f.write(note + "\n")
 
-  def list(self):
-      # Devuelve todas las notas
-      return self._notes
+    def list(self):
+        with open(self.filename, "r") as f:
+            return [line.strip() for line in f.readlines()]
 
-  def delete(self, note):
-      # Borra una nota si existe
-      if note in self._notes:
-          self._notes.remove(note)
-          return True
-      # Si la nota no existe, devuelve False
-      return False
+    def delete(self, note):
+        notes = self.list()
+        if note in notes:
+            notes.remove(note)
+            with open(self.filename, "w") as f:
+                for n in notes:
+                    f.write(n + "\n")
+            return True
+        return False
